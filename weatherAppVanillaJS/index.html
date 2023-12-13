@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" spellcheck="false">
+            <!--Adding an event listener like 'click' through DOM is the same as simply adding an 'onclick' attribute in HTML. There is no difference. I've checked this particular programme both ways and it works fine.-->
+            <button><img src="./Assets/search.png" alt="search icon"></button>
+        </div>
+        <div class="error">
+            <p>Invalid City Name</p>
+        </div>
+        <div class="weather">
+            <img class="weather-icon" src="./Assets/rain.png" alt="current weather">
+            <h1 class="temp">22°C</h1>
+            <h2 class="city">Delhi</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="./Assets/humidity.png" alt="humidity">
+                    <div>
+                        <p class="_1 humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="./Assets/wind.png" alt="wind">
+                    <div>
+                        <p class="_1 wind">5km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = '55caa931df68d89863a5ea00721b2850';
+
+        const weatherIcon = document.querySelector('.weather-icon');
+
+        document.querySelector('.search button').addEventListener('click', () => checkWeather());
+
+        async function checkWeather() {
+            const cityName = document.getElementsByTagName('input')[0].value;
+
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=${cityName}&appid=${apiKey}`;
+
+            const response = await fetch(apiUrl);
+
+            if (response.status === 404) {
+                document.querySelector('.error').style.display = 'block';
+                document.querySelector('.weather').style.display = 'none';
+            }
+
+            let data = await response.json();
+
+            console.log(data);
+
+            document.querySelector('.city').innerHTML = data.name;
+            document.querySelector('.temp').innerHTML = Math.round(data.main.temp) + '°C';
+            document.querySelector('.humidity').innerHTML = data.main.humidity + '%';
+            document.querySelector('.wind').innerHTML = Math.round(data.wind.speed) + 'km/h';
+
+            switch (data.weather[0].main) {
+                case "Clouds":
+                    weatherIcon.src = "./Assets/cloud.png";
+                    break;
+                case "Drizzle":
+                    weatherIcon.src = "./Assets/drizzle.png";
+                    break;
+                case "Rain":
+                    weatherIcon.src = "./Assets/rain.png";
+                    break;
+                case "Snow":
+                    weatherIcon.src = "./Assets/snow.png";
+                    break;
+                case "Clear":
+                    weatherIcon.src = "./Assets/clear.png";
+                    break;
+                default:
+                    weatherIcon.src = "./Assets/clear.png"
+            }
+
+            document.querySelector('.weather').style.display = 'block';
+            document.querySelector('.error').style.display = 'none';
+
+        }
+
+
+    </script>
+
+</body>
+
+</html>
